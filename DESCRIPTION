@@ -1,0 +1,11 @@
+Package: Misc.SHH.f
+Title: Misc. Functions for Use by Public Health--Seattle & King County STI/HIV/HCV Epidemiologists
+Version: 0.0.0.9000
+Authors@R: 
+    person("Richard", "Lechtenberg", , "rlechtenberg@kingcounty.gov", role = c("aut", "cre"))
+Description: Misc. Functions for Use by Public Health--Seattle & King County STI/HIV/HCV Epidemiologists
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
