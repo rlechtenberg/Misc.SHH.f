@@ -27,7 +27,11 @@
 #'   msg = "y is 14 in some rows of x"
 #')
 
-assert_no_rows <- function(df, msg = NULL, sound = 9) {
+assert_no_rows <- function(
+  df,
+  msg = NULL,
+  sound = 9
+) {
   if (nrow(df) > 0) {
     if (is.null(msg)) {
       msg <- paste0(
@@ -59,6 +63,9 @@ assert_no_rows <- function(df, msg = NULL, sound = 9) {
 #'
 #' @param df A data.frame or expression evaluating to one.
 #' @param by A character vector specifying the name of a column whose values are expected to be unique within `df` (or names of 2+ columns, combinations of whose values are expected to be unique).
+#' #'@param sound A sound to play if the assertion fails. See [beepr::beep()] for a
+#'  list of valid options.
+
 #'
 #' @returns If the assertion fails, generates an error message. If run
 #'   interactively, will also play the specified sound to call the user's
@@ -71,7 +78,11 @@ assert_no_rows <- function(df, msg = NULL, sound = 9) {
 #' x <- data.frame(x = c(rep(1, 5), 6:10), y = c(rep(11, 3), 14:20))
 #' assert_unique(x, by = "x")
 #' assert_unique(x, by = c("x", "y"))
-assert_unique <- function(df, by = NULL, sound = 9) {
+assert_unique <- function(
+  df,
+  by = NULL,
+  sound = 9
+) {
   stopifnot(!is.null(by))
 
   assert_no_rows(
