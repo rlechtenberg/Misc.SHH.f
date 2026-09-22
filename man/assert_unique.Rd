@@ -9,7 +9,9 @@ assert_unique(df, by = NULL, sound = 9)
 \arguments{
 \item{df}{A data.frame or expression evaluating to one.}
 
-\item{by}{A character vector specifying the name of a column whose values are expected to be unique within \code{df} (or names of 2+ columns, combinations of whose values are expected to be unique).}
+\item{by}{A character vector specifying the name of a column whose values are expected to be unique within \code{df} (or names of 2+ columns, combinations of whose values are expected to be unique).
+#'@param sound A sound to play if the assertion fails. See \code{\link[beepr:beep]{beepr::beep()}} for a
+list of valid options.}
 }
 \value{
 If the assertion fails, generates an error message. If run

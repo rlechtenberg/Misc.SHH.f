@@ -8,7 +8,7 @@ Misc.SHH.f
 [![R-CMD-check](https://github.com/rlechtenberg/Misc.SHH.f/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rlechtenberg/Misc.SHH.f/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-Misc.SHH.f provides general-purpose functions for use for Public
+Misc.SHH.f provides general-purpose functions for use by Public
 Health–Seatle & King County STI/HIV/HCV epidemiologists.
 
 ## Installation

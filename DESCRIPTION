@@ -16,4 +16,7 @@ BugReports: https://github.com/rlechtenberg/Misc.SHH.f/issues
 Imports: 
     beepr,
     dplyr,
+    gt,
+    labelled,
+    purrr,
     rstudioapi

@@ -96,3 +96,28 @@ assert_unique <- function(
     sound = sound
   )
 }
+
+#' Check that 1+ variables are present in a data.frame
+#'
+#'#' @param df A data frame
+#' @param vars A character vector containing 1+ names of columns expected in df
+#'
+#' @returns An error if any variable specified in `vars` is not present in `df`
+#' @export
+#'
+#' @examples
+#' data.frame(x = letters[1:3], y = 1:3) |> assert_vars_in_df(c("y", "u", "v"))
+#' data.frame(x = letters[1:3], y = 1:3, u = 4:6) |> assert_vars_in_df(c("y", "u", "v"))
+#' data.frame(x = letters[1:3], y = 1:3, u = 4:6, v = 7:9) |> assert_vars_in_df(c("y", "u", "v"))
+assert_vars_in_df <- function(df, vars) {
+  stopifnot(is.data.frame(df))
+  stopifnot(length(vars) >= 1)
+  stopifnot(is.character(vars))
+
+  vars |>
+    purrr::walk(.f = function(x) {
+      if (!x %in% names(df)) {
+        stop(paste0('Variable `', x, '` must be present in `df`'))
+      }
+    })
+}
