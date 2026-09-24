@@ -7,17 +7,17 @@
 add_bars_for_pcts(x)
 }
 \arguments{
-\item{x}{gtsummary object}
+\item{x}{A gtsummary or gt table data object}
 }
 \value{
-an gt table data object
+A gt table data object
 }
 \description{
 Add bars depicting the percents within a summary table
 }
 \examples{
 x <- data.frame(
-sex = c(rep(1, 75), rep(2, 25)) |>
+sex = c(rep(1, 75), rep(2, 20), rep(NA_integer_, 5)) |>
   labelled::labelled(
     labels = c(Male = 1, Female = 2, Transwoman = 3),
     label = 'Sex Assigned at Birth'

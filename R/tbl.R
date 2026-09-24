@@ -1,13 +1,83 @@
+#' Reformat percents less 1 so they show as "<1%"
+#'
+#' @param x A gtsummary data object
+#'
+#' @returns A gt table data object
+#' @export
+#'
+#' @examples
+#' x <- data.frame(
+#' sex = c(rep(1, 750), rep(2, 200), rep(NA_integer_, 42), rep(3, 8)) |>
+#'   labelled::labelled(
+#'     labels = c(Male = 1, Female = 2, Transwoman = 3),
+#     label = 'Sex Assigned at Birth'
+#'   )
+#' )
+#'# before
+#' x |>
+#'   Misc.SHH.f::labelled_to_factor() |>
+#'   gtsummary::tbl_summary() |>
+#'   Misc.SHH.f::add_bars_for_pcts()
+#'# after
+#' x |>
+#'   Misc.SHH.f::labelled_to_factor() |>
+#'   gtsummary::tbl_summary() |>
+#'   refmt_pcts_lt1() |>
+#'   Misc.SHH.f::add_bars_for_pcts()
+refmt_pcts_lt1 <- function(x) {
+  stopifnot("gtsummary" %in% class(x))
+
+  custom_percent_fun <- function(x) {
+    # extract the percentage
+    n_pct_pattern <- "([0-9\\,]+) \\(([0-9]+(\\.[0-9]+)?)\\%\\)"
+
+    between_0_and_1_not_inclusive <- function(x) {
+      ifelse(x > 0 & x < 1, TRUE, FALSE)
+    }
+
+    dplyr::case_when(
+      stringr::str_extract(string = x, pattern = n_pct_pattern, group = 2) |>
+        as.numeric() |>
+        between_0_and_1_not_inclusive() ~
+        paste(
+          stringr::str_extract(
+            string = x,
+            pattern = n_pct_pattern,
+            group = 1
+          ),
+          "(<1%)"
+        ),
+      TRUE ~ x
+    )
+
+    # if less than 1, replace with "<1%"
+  }
+  # all(
+  #   custom_percent_fun(
+  #     x = c('750 (78%)', '200 (1%)', '8 (0.8%)', '42', '1,200 (0%)')
+  #   ) ==
+  #     c("750 (78%)", "200 (1%)", "8 (<1%)", "42", "1,200 (0%)")
+  # )
+
+  y <- x |>
+    gtsummary::modify_post_fmt_fun(
+      fmt_fun = custom_percent_fun,
+      columns = gtsummary::all_stat_cols()
+    )
+
+  return(y)
+}
+
 #' Add bars depicting the percents within a summary table
 #'
-#' @param x gtsummary object
+#' @param x A gtsummary or gt table data object
 #'
-#' @returns an gt table data object
+#' @returns A gt table data object
 #' @export
 #'
 #' @examples
 #'x <- data.frame(
-#' sex = c(rep(1, 75), rep(2, 25)) |>
+#' sex = c(rep(1, 75), rep(2, 20), rep(NA_integer_, 5)) |>
 #'   labelled::labelled(
 #'     labels = c(Male = 1, Female = 2, Transwoman = 3),
 #'     label = 'Sex Assigned at Birth'
@@ -17,12 +87,17 @@
 #'   Misc.SHH.f::labelled_to_factor() |>
 #'   gtsummary::tbl_summary() |>
 #'   add_bars_for_pcts()
-
 add_bars_for_pcts <- function(x) {
-  stopifnot("gtsummary" %in% class(x))
+  stopifnot("gtsummary" %in% class(x) | "gt_tbl" %in% class(x))
 
-  x |>
-    gtsummary::as_gt() |>
+  y <- x
+
+  if ("gtsummary" %in% class(x)) {
+    y <- y |>
+      gtsummary::as_gt()
+  }
+
+  y <- y |>
     gt::text_transform(
       # Targets all statistical output columns (stat_1, stat_2, etc.)
       locations = gt::cells_body(columns = starts_with("stat_")),
@@ -33,7 +108,15 @@ add_bars_for_pcts <- function(x) {
         # Create an HTML progress bar div container behind the text
         ifelse(
           is.na(pct),
-          x, # Leaves rows without a percentage (e.g., continuous means) completely untouched
+          paste0(
+            "<div style='position: relative; width: 100%; display: flex; align-items: center; min-height: 24px;'>",
+            "<span style='position: relative; z-index: 1; padding-left: 4px; font-weight: 500;'>",
+            # z-index: 1: Guarantees that the typography is layered cleanly over
+            # the top of the bar container, ensuring maximum readability.
+            x,
+            "</span>",
+            "</div>"
+          ), # left-justifies text in rows without a percentage (e.g., counts of missing observations)
           paste0(
             "<div style='position: relative; width: 100%; display: flex; align-items: center; min-height: 24px;'>",
             "<div style='position: absolute; left: 0; top: 2px; bottom: 2px; width: ",
@@ -49,6 +132,8 @@ add_bars_for_pcts <- function(x) {
         )
       }
     )
+
+  return(y)
 }
 
 #'Group breakdowns by non-mutually exclusive race/ethnicity variables (e.g.,
